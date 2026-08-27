@@ -1,0 +1,117 @@
+/* ==========================================================================
+   ChatNeo admin — shared responsive fixes for Settings, Route Builder,
+   and Submissions. WP's own admin CSS handles a lot of this already at
+   its own breakpoint (782px, where the admin menu collapses), but the
+   custom flex layouts and tables built for this plugin need their own
+   rules to actually reflow instead of overflowing or squeezing.
+   ========================================================================== */
+
+/* Prevent any control from overflowing its column on narrow screens —
+   the single most common cause of horizontal scrolling on mobile admin. */
+.wcw-routes-wrap input[type="text"],
+.wcw-routes-wrap input[type="password"],
+.wcw-routes-wrap textarea,
+.wcw-routes-wrap select,
+.wrap .form-table input[type="text"],
+.wrap .form-table input[type="password"],
+.wrap .form-table textarea {
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+/* ---------- Route Builder ---------- */
+
+@media (max-width: 782px) {
+	/* The route header row (label, remove/move buttons) was a rigid
+	   single-line flex row — stack it so nothing gets clipped. */
+	.wcw-route-header-row {
+		flex-wrap: wrap;
+		gap: 8px !important;
+	}
+
+	.wcw-route-row .wcw-route-label {
+		width: 100%;
+	}
+
+	/* Question rows: field key / prompt / type / required / actions were
+	   all inline — stack each into its own line below this width. */
+	.wcw-question-row {
+		flex-direction: column;
+		align-items: stretch !important;
+		border: 1px solid #e2e2e2;
+		padding: 10px;
+		border-radius: 4px;
+		background: #fafafa;
+	}
+
+	.wcw-question-row label {
+		width: 100%;
+	}
+
+	.wcw-question-row .wcw-question-key,
+	.wcw-question-row .wcw-question-prompt {
+		width: 100% !important;
+	}
+
+	.wcw-question-row .button {
+		margin-top: 6px;
+		width: 100%;
+	}
+
+	/* The CRM field-mapping table and any other wide table inside a
+	   route: scroll horizontally instead of squeezing columns unreadably. */
+	.wcw-crm-field-map table {
+		display: block;
+		overflow-x: auto;
+		max-width: 100%;
+		white-space: nowrap;
+	}
+}
+
+/* ---------- Submissions ---------- */
+
+@media (max-width: 782px) {
+	/* Turn each row into a stacked "card": every cell becomes a labeled
+	   block instead of a table column, using the data-label attribute
+	   already output by the PHP template. */
+	.wcw-responsive-table thead {
+		display: none;
+	}
+
+	.wcw-responsive-table,
+	.wcw-responsive-table tbody,
+	.wcw-responsive-table tr,
+	.wcw-responsive-table td,
+	.wcw-responsive-table th {
+		display: block;
+		width: 100% !important;
+	}
+
+	.wcw-responsive-table tr {
+		margin-bottom: 12px;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		padding: 8px 12px;
+	}
+
+	.wcw-responsive-table td,
+	.wcw-responsive-table th.check-column {
+		border: none;
+		padding: 6px 0;
+	}
+
+	.wcw-responsive-table td[data-label]::before {
+		content: attr(data-label);
+		display: block;
+		font-weight: 600;
+		font-size: 11px;
+		text-transform: uppercase;
+		color: #666;
+		margin-bottom: 2px;
+	}
+
+	.wcw-bulk-actions-bar {
+		display: flex;
+		flex-wrap: wrap;
+	}
+}
