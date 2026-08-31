@@ -3,7 +3,7 @@ Contributors: Consyst Group
 Requires at least: 5.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.10.1
+Stable tag: 1.10.2
 License: GPLv2 or later
 
 A floating, conversational WhatsApp chat widget built on a fully generic
@@ -38,6 +38,14 @@ first message is what starts a compliant conversation that Whatomate
 can then pick up.
 
 == Changelog ==
+
+= 1.10.2 =
+* Fixed the chat widget on phones: instead of the small popup used on
+  desktop, it now opens as a fullscreen sheet that resizes itself to
+  stay above the on-screen keyboard, so the message you're typing (and
+  the Send button) never end up hidden underneath it.
+* Fixed the phone browser auto-zooming the page when you tapped into
+  the chat's text field, which could otherwise throw the layout off.
 
 = 1.10.1 =
 * With only one route configured, the widget now skips the "which

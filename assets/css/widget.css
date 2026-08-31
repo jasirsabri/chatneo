@@ -500,15 +500,6 @@
 }
 
 @media (max-width: 420px) {
-	#wcw-chat-panel {
-		width: calc(100vw - 24px);
-		right: -12px;
-		height: 66vh;
-	}
-	.wcw-pos-left #wcw-chat-panel {
-		left: -12px;
-	}
-
 	/* The pill bar's text label takes up too much of the screen edge on
 	   phones — collapse to a plain icon-only circle, same treatment as
 	   when the panel is open on any screen size. */
@@ -533,4 +524,70 @@
 	.wcw-bubble-online-dot {
 		display: block;
 	}
+}
+
+/* ---------- Mobile chat panel: fullscreen, keyboard-aware ---------- */
+/* A small popup anchored above the bubble (the desktop treatment) fights
+   with the on-screen keyboard on phones: it has a fixed height, so when
+   the keyboard opens it either gets covered or leaves the input row
+   pinned underneath the keyboard where the visitor can't see what they're
+   typing or the Send button.
+   Below this breakpoint the panel instead becomes a fullscreen sheet whose
+   height tracks the *visible* viewport — 100dvh where supported, and the
+   --wcw-vvh custom property (kept in sync from window.visualViewport by
+   widget.js) as a fallback where it isn't. Because the input row is a flex
+   child of the panel, it always stays pinned to the bottom of whatever
+   that resolves to, i.e. always just above the keyboard. Also covers short
+   landscape phones (max-height) where the same popup-vs-keyboard problem
+   shows up even at wider widths. */
+@media (max-width: 640px), (max-height: 480px) {
+	#wcw-chat-panel {
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		height: var(--wcw-vvh, 100dvh);
+		max-width: none;
+		max-height: none;
+		border-radius: 0;
+	}
+
+	.wcw-pos-left #wcw-chat-panel {
+		left: 0;
+	}
+
+	#wcw-chat-panel.wcw-hidden {
+		transform: translateY(16px);
+	}
+
+	/* The little tail connecting the panel to the bubble only makes sense
+	   for a small docked popup, not a fullscreen sheet. */
+	#wcw-chat-panel::after {
+		display: none;
+	}
+
+	#wcw-chat-header {
+		padding-top: calc(14px + env(safe-area-inset-top));
+	}
+
+	#wcw-chat-form {
+		padding-bottom: calc(10px + env(safe-area-inset-bottom));
+	}
+
+	/* iOS Safari auto-zooms the page when a focused input's font-size is
+	   under 16px — on a fixed-position fullscreen panel that zoom breaks
+	   the whole layout the instant the keyboard opens. 16px keeps it from
+	   triggering at all. */
+	.wcw-chat-input-wrap input {
+		font-size: 16px;
+	}
+}
+
+/* Applied to <body> by widget.js while the mobile panel is open, so the
+   page behind the fullscreen sheet can't scroll along with it. */
+body.wcw-body-lock {
+	overflow: hidden;
 }

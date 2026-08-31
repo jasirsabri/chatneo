@@ -20,6 +20,43 @@
 		var i18n = wcwData.i18n;
 		var routes = wcwData.routes || [];
 
+		// ---------- Mobile viewport / keyboard handling ----------
+		// Mirrors the CSS breakpoint that turns the chat panel into a
+		// fullscreen sheet (see widget.css). Kept as one constant so the two
+		// stay in sync.
+		var MOBILE_MQ = window.matchMedia('(max-width: 640px), (max-height: 480px)');
+
+		function isMobileLayout() {
+			return MOBILE_MQ.matches;
+		}
+
+		// window.visualViewport reports the *actually visible* area, which
+		// shrinks when the on-screen keyboard opens (unlike window.innerHeight
+		// on most mobile browsers). Mirroring it into a custom property lets
+		// the fullscreen panel's CSS height track the keyboard even on
+		// browsers that don't yet support 100dvh.
+		function updateViewportHeightVar() {
+			if (!window.visualViewport) {
+				return;
+			}
+			document.documentElement.style.setProperty('--wcw-vvh', window.visualViewport.height + 'px');
+		}
+
+		function handleViewportResize() {
+			updateViewportHeightVar();
+			// Keep whatever's newest (the latest message, or the input row)
+			// visible above the keyboard as it opens/closes.
+			if (!panel.classList.contains('wcw-hidden')) {
+				scrollToBottom();
+			}
+		}
+
+		if (window.visualViewport) {
+			window.visualViewport.addEventListener('resize', handleViewportResize);
+			window.visualViewport.addEventListener('scroll', handleViewportResize);
+		}
+		updateViewportHeightVar();
+
 		// ---------- Phone input (country code dropdown) ----------
 		// The single shared input is reused across every question in every
 		// route, so intl-tel-input is attached/detached on demand rather
@@ -458,6 +495,13 @@
 		function openPanel() {
 			panel.classList.remove('wcw-hidden');
 			root.classList.add('wcw-open');
+			if (isMobileLayout()) {
+				// Fullscreen panel on mobile — stop the page behind it from
+				// scrolling along, and make sure the height var is fresh
+				// before the keyboard has a chance to change it further.
+				document.body.classList.add('wcw-body-lock');
+				updateViewportHeightVar();
+			}
 			startConversation();
 			window.setTimeout(function () { activeInput.focus(); }, 200);
 		}
@@ -465,6 +509,7 @@
 		function closePanel() {
 			panel.classList.add('wcw-hidden');
 			root.classList.remove('wcw-open');
+			document.body.classList.remove('wcw-body-lock');
 		}
 
 		function togglePanel() {

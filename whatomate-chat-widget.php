@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       ChatNeo
  * Description:       A floating, conversational WhatsApp chat widget with a fully generic Route engine — each destination department (Sales, Careers, Support, or anything you define) has its own questions, its own ending (WhatsApp handoff or a direct contact message), and its own optional ERPNext CRM mapping, all configured in the Route Builder without touching code.
- * Version:           1.10.1
+ * Version:           1.10.2
  * Author:            Consyst Group
  * Text Domain:       whatomate-chat-widget
  *
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'WCW_VERSION', '1.10.1' );
+define( 'WCW_VERSION', '1.10.2' );
 define( 'WCW_DB_VERSION', '1.9' );
 define( 'WCW_PLUGIN_FILE', __FILE__ );
 define( 'WCW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
