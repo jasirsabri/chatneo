@@ -116,7 +116,7 @@ class WCW_Routes_Page {
 			'label'        => '',
 			'questions'    => array(),
 			'final_action' => array( 'type' => 'whatsapp', 'message_template' => '', 'contact_phone' => '', 'contact_email' => '' ),
-			'crm'          => array( 'enabled' => false, 'doctype' => '', 'field_map' => array() ),
+			'crm'          => array( 'enabled' => false, 'doctype' => '', 'lead_owner' => '', 'field_map' => array(), 'static_fields' => array() ),
 		);
 	}
 
@@ -198,6 +198,13 @@ class WCW_Routes_Page {
 					<input type="text" name="<?php echo esc_attr( $name_prefix ); ?>[crm][doctype]" value="<?php echo esc_attr( $route['crm']['doctype'] ); ?>" placeholder="e.g. Lead, Job Applicant" />
 				</label>
 			</p>
+			<p>
+				<label>
+					<?php esc_html_e( 'Lead owner', 'whatomate-chat-widget' ); ?><br />
+					<input type="text" class="regular-text" name="<?php echo esc_attr( $name_prefix ); ?>[crm][lead_owner]" value="<?php echo esc_attr( isset( $route['crm']['lead_owner'] ) ? $route['crm']['lead_owner'] : '' ); ?>" placeholder="e.g. sales@example.com" />
+				</label>
+				<span class="description" style="display:block;"><?php esc_html_e( 'Optional. The ERPNext user (their email) each new lead is assigned to, sent as lead_owner. Must match an existing ERPNext user. Leave blank to let ERPNext decide (usually the API user).', 'whatomate-chat-widget' ); ?></span>
+			</p>
 			<div class="wcw-crm-field-map">
 				<p class="description"><?php esc_html_e( 'Field mapping (rebuilds automatically as you add/rename questions above):', 'whatomate-chat-widget' ); ?></p>
 				<table class="widefat" style="max-width:520px;">
@@ -221,6 +228,21 @@ class WCW_Routes_Page {
 					</tbody>
 				</table>
 			</div>
+			<?php
+			$static_lines = '';
+			if ( ! empty( $route['crm']['static_fields'] ) && is_array( $route['crm']['static_fields'] ) ) {
+				foreach ( $route['crm']['static_fields'] as $static_field => $static_value ) {
+					$static_lines .= $static_field . ' = ' . $static_value . "\n";
+				}
+			}
+			?>
+			<p>
+				<label style="display:block;">
+					<?php esc_html_e( 'Fixed values (sent with every submission)', 'whatomate-chat-widget' ); ?>
+					<textarea class="large-text" rows="3" style="max-width:520px;" name="<?php echo esc_attr( $name_prefix ); ?>[crm][static_fields]" placeholder="source = Website"><?php echo esc_textarea( trim( $static_lines ) ); ?></textarea>
+				</label>
+				<span class="description"><?php esc_html_e( 'One per line, as fieldname = value. Use this for fields your CRM requires but visitors are never asked — for example, a mandatory Source field: source = Website', 'whatomate-chat-widget' ); ?></span>
+			</p>
 		</div>
 		<?php
 	}

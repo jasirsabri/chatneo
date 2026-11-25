@@ -3,7 +3,7 @@ Contributors: Consyst Group
 Requires at least: 5.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.10.2
+Stable tag: 1.10.4
 License: GPLv2 or later
 
 A floating, conversational WhatsApp chat widget built on a fully generic
@@ -38,6 +38,20 @@ first message is what starts a compliant conversation that Whatomate
 can then pick up.
 
 == Changelog ==
+
+= 1.10.4 =
+* Route Builder: each route's CRM section now has a "Lead owner" field.
+  Enter the email of the ERPNext user new leads should be assigned to
+  (it must match an existing ERPNext user). Leave it blank to keep the
+  old behaviour, where ERPNext assigns the lead to the API user.
+
+= 1.10.3 =
+* Route Builder: each route's CRM section now has a "Fixed values"
+  box. Use it for fields your CRM requires but visitors are never asked
+  — for example, if your CRM rejects new Leads with "Value missing for
+  Lead: Source", enter "source = Website" (one "fieldname = value" per
+  line). These values are sent with every submission for that route.
+  Existing routes keep working unchanged.
 
 = 1.10.2 =
 * Fixed the chat widget on phones: instead of the small popup used on

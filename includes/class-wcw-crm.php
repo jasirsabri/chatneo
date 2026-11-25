@@ -129,6 +129,23 @@ class WCW_CRM {
 
 		$payload = array();
 
+		// Fixed values first (e.g. a mandatory "source"), so a mapped visitor
+		// answer for the same field still wins below.
+		if ( isset( $route['crm']['static_fields'] ) && is_array( $route['crm']['static_fields'] ) ) {
+			foreach ( $route['crm']['static_fields'] as $target_field => $fixed_value ) {
+				$target_field = trim( (string) $target_field );
+				if ( '' !== $target_field && '' !== (string) $fixed_value ) {
+					$payload[ $target_field ] = $fixed_value;
+				}
+			}
+		}
+
+		// The route's dedicated Lead owner setting — sent as lead_owner, and
+		// takes precedence over a same-named fixed value.
+		if ( ! empty( $route['crm']['lead_owner'] ) ) {
+			$payload['lead_owner'] = $route['crm']['lead_owner'];
+		}
+
 		foreach ( $field_map as $our_key => $target_field ) {
 			$target_field = trim( (string) $target_field );
 			if ( '' !== $target_field && isset( $values[ $our_key ] ) && '' !== $values[ $our_key ] ) {

@@ -187,6 +187,7 @@ class WCW_Routes {
 
 			$crm_enabled  = ! empty( $raw_route['crm']['enabled'] );
 			$crm_doctype  = isset( $raw_route['crm']['doctype'] ) ? sanitize_text_field( trim( $raw_route['crm']['doctype'] ) ) : '';
+			$crm_owner    = isset( $raw_route['crm']['lead_owner'] ) ? sanitize_text_field( trim( $raw_route['crm']['lead_owner'] ) ) : '';
 			$field_map    = array();
 			$raw_field_map = isset( $raw_route['crm']['field_map'] ) && is_array( $raw_route['crm']['field_map'] ) ? $raw_route['crm']['field_map'] : array();
 
@@ -201,15 +202,36 @@ class WCW_Routes {
 				}
 			}
 
+			// Fixed values sent with every push regardless of what the
+			// visitor answered — e.g. a CRM that makes "source" mandatory.
+			// Submitted as a textarea, one "fieldname = value" per line.
+			$static_fields = array();
+			$raw_static    = isset( $raw_route['crm']['static_fields'] ) && is_string( $raw_route['crm']['static_fields'] )
+				? $raw_route['crm']['static_fields']
+				: '';
+			foreach ( preg_split( '/\r\n|\r|\n/', $raw_static ) as $line ) {
+				$parts = explode( '=', $line, 2 );
+				if ( 2 !== count( $parts ) ) {
+					continue;
+				}
+				$field_name  = sanitize_text_field( trim( $parts[0] ) );
+				$field_value = sanitize_text_field( trim( $parts[1] ) );
+				if ( '' !== $field_name && '' !== $field_value ) {
+					$static_fields[ $field_name ] = $field_value;
+				}
+			}
+
 			$clean[] = array(
 				'id'           => $id,
 				'label'        => $label,
 				'questions'    => $questions,
 				'final_action' => $final_action,
 				'crm'          => array(
-					'enabled'   => $crm_enabled,
-					'doctype'   => $crm_doctype,
-					'field_map' => $field_map,
+					'enabled'       => $crm_enabled,
+					'doctype'       => $crm_doctype,
+					'lead_owner'    => $crm_owner,
+					'field_map'     => $field_map,
+					'static_fields' => $static_fields,
 				),
 			);
 		}
